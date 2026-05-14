@@ -21,23 +21,33 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: none
-          tools: composer:v2
+          tools: composer:v2, phpunit:10
+          # phpunit is fetched as a standalone phar — no composer install of
+          # magento/* (which would need marketplace auth).
 
       - name: Validate composer.json
-        # Magento modules conventionally use "*" version constraints; --strict would fail.
         run: composer validate --no-check-publish
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: PHP syntax lint
+        run: |
+          find Api Model Controller Console Exception registration.php -name "*.php" \
+            -exec php -l -n {} \; 2>&1 | grep -v "No syntax errors" || true
+          # Fail if any file shows an error
+          ! find Api Model Controller Console Exception registration.php -name "*.php" \
+            -exec php -l -n {} \; 2>&1 | grep -q "Parse error\|syntax error"
 
-      - name: PHP CodeSniffer (Magento standard)
-        run: vendor/bin/phpcs --standard=Magento2 --extensions=php --ignore=vendor/,Test/ .
-        continue-on-error: true # baseline first; tighten over time
-
-      - name: PHPStan
-        run: vendor/bin/phpstan analyse --memory-limit=2G --no-progress
-        continue-on-error: true
-
-      - name: PHPUnit (Unit)
-        run: vendor/bin/phpunit --testsuite=Unit
-        if: hashFiles('Test/Unit/**/*.php') != ''
+      - name: PHPUnit (Unit only — Magento not required)
+        run: |
+          if [ -d Test/Unit ]; then
+            phpunit --bootstrap <(cat <<'EOF'
+          <?php
+          spl_autoload_register(function ($class) {
+              if (strpos($class, 'Gaudit\\AiCommerce\\') !== 0) return;
+              $rel = str_replace(['Gaudit\\AiCommerce\\', '\\'], ['', '/'], $class) . '.php';
+              if (file_exists(__DIR__ . '/' . $rel)) {
+                  require __DIR__ . '/' . $rel;
+              }
+          });
+          EOF
+          ) Test/Unit
+          fi
