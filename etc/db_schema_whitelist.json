@@ -1,0 +1,57 @@
+{
+    "gaudit_aicommerce_conversation": {
+        "column": {
+            "entity_id": true,
+            "channel_id": true,
+            "external_conversation_id": true,
+            "store_id": true,
+            "customer_id": true,
+            "quote_id": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "GAUDIT_AICOMMERCE_CONVERSATION_STORE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "GAUDIT_AICOMMERCE_CONVERSATION_CHANNEL_EXTERNAL": true
+        }
+    },
+    "gaudit_aicommerce_message": {
+        "column": {
+            "entity_id": true,
+            "conversation_id": true,
+            "role": true,
+            "content": true,
+            "tool_calls_json": true,
+            "tool_results_json": true,
+            "input_tokens": true,
+            "output_tokens": true,
+            "model": true,
+            "created_at": true
+        },
+        "index": {
+            "GAUDIT_AICOMMERCE_MESSAGE_CONVERSATION_CREATED": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "GAUDIT_AICOMMERCE_MESSAGE_CONVERSATION_ID": true
+        }
+    },
+    "gaudit_aicommerce_usage": {
+        "column": {
+            "entity_id": true,
+            "store_id": true,
+            "period": true,
+            "provider": true,
+            "input_tokens": true,
+            "output_tokens": true,
+            "cost_usd": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "GAUDIT_AICOMMERCE_USAGE_STORE_PERIOD_PROVIDER": true
+        }
+    }
+}

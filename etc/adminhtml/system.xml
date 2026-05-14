@@ -62,6 +62,12 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <depends><field id="telegram_enabled">1</field></depends>
                 </field>
+                <field id="telegram_webhook_secret" translate="label comment" type="obscure" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Telegram Webhook Secret</label>
+                    <comment>Optional. Pass this as `secret_token` when registering the webhook with Telegram; validated against X-Telegram-Bot-Api-Secret-Token header.</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends><field id="telegram_enabled">1</field></depends>
+                </field>
                 <field id="evolution_enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>WhatsApp via Evolution API</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -88,7 +94,13 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <depends><field id="meta_cloud_enabled">1</field></depends>
                 </field>
-                <field id="meta_verify_token" translate="label" type="obscure" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="meta_app_secret" translate="label comment" type="obscure" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Meta App Secret</label>
+                    <comment>App Secret from Meta dashboard. Used to verify X-Hub-Signature-256 on inbound webhooks.</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends><field id="meta_cloud_enabled">1</field></depends>
+                </field>
+                <field id="meta_verify_token" translate="label" type="obscure" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Meta Webhook Verify Token</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                     <depends><field id="meta_cloud_enabled">1</field></depends>
