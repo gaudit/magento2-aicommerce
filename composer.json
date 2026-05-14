@@ -1,0 +1,59 @@
+{
+    "name": "gaudit/magento2-aicommerce",
+    "description": "Open-source AI Commerce module for Magento 2 / MageOS — turns your store into a conversational agent. Multi-LLM (Claude/OpenAI/Gemini), multi-channel (Telegram/WhatsApp/MCP/ACP/UCP).",
+    "type": "magento2-module",
+    "version": "0.1.0",
+    "license": "MIT",
+    "keywords": [
+        "magento2",
+        "mage-os",
+        "ai",
+        "chatbot",
+        "mcp",
+        "acp",
+        "ucp",
+        "claude",
+        "openai",
+        "gemini",
+        "telegram",
+        "whatsapp",
+        "agentic-commerce"
+    ],
+    "homepage": "https://github.com/gaudit/magento2-aicommerce",
+    "authors": [
+        {
+            "name": "Wilker Gaudêncio",
+            "email": "wilker@gaudit.dev",
+            "role": "Author"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/gaudit/magento2-aicommerce/issues",
+        "source": "https://github.com/gaudit/magento2-aicommerce"
+    },
+    "require": {
+        "php": "^8.1",
+        "magento/framework": "*",
+        "magento/module-store": "*",
+        "magento/module-catalog": "*",
+        "magento/module-catalog-search": "*",
+        "magento/module-quote": "*",
+        "magento/module-sales": "*",
+        "magento/module-backend": "*",
+        "magento/module-config": "*",
+        "magento/module-webapi": "*"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^9.6 || ^10.0",
+        "magento/magento-coding-standard": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Gaudit\\AiCommerce\\": ""
+        }
+    }
+}

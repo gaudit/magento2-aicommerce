@@ -1,0 +1,14 @@
+parameters:
+  level: 5
+  paths:
+    - Api
+    - Model
+    - Controller
+    - Console
+    - Exception
+  excludePaths:
+    - vendor
+    - Test
+  ignoreErrors:
+    - '#Call to an undefined method Magento\\Catalog\\Api\\Data\\ProductInterface::isAvailable\(\)#'
+    - '#Call to an undefined method Magento\\Catalog\\Api\\Data\\ProductInterface::getMediaGalleryEntries\(\)#'

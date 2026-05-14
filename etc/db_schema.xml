@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <table name="gaudit_aicommerce_conversation" resource="default" engine="innodb" comment="AI Commerce conversations">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Conversation ID"/>
+        <column xsi:type="varchar" name="channel_id" length="32" nullable="false" comment="Channel (telegram, mcp, ...)"/>
+        <column xsi:type="varchar" name="external_conversation_id" length="128" nullable="false" comment="ID from the external channel"/>
+        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false" comment="Magento store ID"/>
+        <column xsi:type="int" name="customer_id" padding="10" unsigned="true" nullable="true" comment="Magento customer (null = guest)"/>
+        <column xsi:type="int" name="quote_id" padding="10" unsigned="true" nullable="true" comment="Associated quote"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="GAUDIT_AICOMMERCE_CONVERSATION_CHANNEL_EXTERNAL">
+            <column name="channel_id"/>
+            <column name="external_conversation_id"/>
+        </constraint>
+        <index referenceId="GAUDIT_AICOMMERCE_CONVERSATION_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+    <table name="gaudit_aicommerce_message" resource="default" engine="innodb" comment="AI Commerce messages">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true"/>
+        <column xsi:type="int" name="conversation_id" padding="10" unsigned="true" nullable="false"/>
+        <column xsi:type="varchar" name="role" length="16" nullable="false" comment="user|assistant|tool|system"/>
+        <column xsi:type="mediumtext" name="content" nullable="true"/>
+        <column xsi:type="text" name="tool_calls_json" nullable="true" comment="JSON array of tool calls"/>
+        <column xsi:type="text" name="tool_results_json" nullable="true" comment="JSON array of tool results"/>
+        <column xsi:type="int" name="input_tokens" padding="10" unsigned="true" nullable="true"/>
+        <column xsi:type="int" name="output_tokens" padding="10" unsigned="true" nullable="true"/>
+        <column xsi:type="varchar" name="model" length="64" nullable="true"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="GAUDIT_AICOMMERCE_MESSAGE_CONVERSATION_ID"
+                    table="gaudit_aicommerce_message"
+                    column="conversation_id"
+                    referenceTable="gaudit_aicommerce_conversation"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="GAUDIT_AICOMMERCE_MESSAGE_CONVERSATION_CREATED" indexType="btree">
+            <column name="conversation_id"/>
+            <column name="created_at"/>
+        </index>
+    </table>
+
+    <table name="gaudit_aicommerce_usage" resource="default" engine="innodb" comment="Monthly LLM token usage per store">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true"/>
+        <column xsi:type="smallint" name="store_id" padding="5" unsigned="true" nullable="false"/>
+        <column xsi:type="varchar" name="period" length="7" nullable="false" comment="YYYY-MM"/>
+        <column xsi:type="varchar" name="provider" length="32" nullable="false"/>
+        <column xsi:type="bigint" name="input_tokens" padding="20" unsigned="true" nullable="false" default="0"/>
+        <column xsi:type="bigint" name="output_tokens" padding="20" unsigned="true" nullable="false" default="0"/>
+        <column xsi:type="decimal" name="cost_usd" scale="6" precision="14" nullable="false" default="0"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="GAUDIT_AICOMMERCE_USAGE_STORE_PERIOD_PROVIDER">
+            <column name="store_id"/>
+            <column name="period"/>
+            <column name="provider"/>
+        </constraint>
+    </table>
+</schema>

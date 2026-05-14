@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <!-- Reserved for future ACP-style typed endpoints. Channel webhooks use frontend controllers (see Controller/Webhook/). -->
+</routes>

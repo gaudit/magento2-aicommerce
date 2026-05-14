@@ -1,0 +1,80 @@
+# =============================================================================
+# Optional sidecars for Gaudit_AiCommerce.
+#
+# Drop this next to your Magento docker-compose.yml and merge with:
+#   docker compose -f docker-compose.yml -f docker-compose.example.yml up -d
+#
+# Provides:
+#   - Evolution API (open-source WhatsApp gateway) for the `evolution` channel
+#   - Optional reverse-proxy snippet (commented) for SSL termination
+# =============================================================================
+
+services:
+  evolution-api:
+    image: atendai/evolution-api:latest
+    container_name: aicommerce_evolution
+    restart: unless-stopped
+    ports:
+      - "8085:8080"
+    environment:
+      # Auth — set to a strong value and copy into Magento admin
+      AUTHENTICATION_API_KEY: "change-me-strong-random-key"
+
+      # Server
+      SERVER_TYPE: "http"
+      SERVER_PORT: "8080"
+
+      # Database (Evolution needs Mongo OR Postgres + Redis)
+      DATABASE_ENABLED: "true"
+      DATABASE_PROVIDER: "postgresql"
+      DATABASE_CONNECTION_URI: "postgresql://evolution:evolution@evolution-db:5432/evolution"
+
+      # Redis
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: "redis://evolution-redis:6379/0"
+
+      # Webhook (point at your Magento)
+      WEBHOOK_GLOBAL_URL: "https://your-store.example/aicommerce/webhook/evolution"
+      WEBHOOK_GLOBAL_ENABLED: "true"
+      WEBHOOK_EVENTS_MESSAGES_UPSERT: "true"
+    depends_on:
+      - evolution-db
+      - evolution-redis
+    volumes:
+      - evolution_instances:/evolution/instances
+
+  evolution-db:
+    image: postgres:16-alpine
+    container_name: aicommerce_evolution_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: evolution
+      POSTGRES_USER: evolution
+      POSTGRES_PASSWORD: evolution
+    volumes:
+      - evolution_db:/var/lib/postgresql/data
+
+  evolution-redis:
+    image: redis:7-alpine
+    container_name: aicommerce_evolution_redis
+    restart: unless-stopped
+    volumes:
+      - evolution_redis:/data
+
+volumes:
+  evolution_instances:
+  evolution_db:
+  evolution_redis:
+
+# After `up`:
+#  1. Create an instance:
+#     curl -X POST http://localhost:8085/instance/create \
+#       -H "apikey: change-me-strong-random-key" \
+#       -H "Content-Type: application/json" \
+#       -d '{"instanceName": "my-store", "qrcode": true}'
+#  2. Scan QR from the response (Baileys mode)
+#  3. In Magento admin → Channels → Evolution:
+#       - Enabled: yes
+#       - Instance name: my-store
+#       - API key: change-me-strong-random-key
+#       - Base URL: http://evolution-api:8080 (if same network) or http://host:8085

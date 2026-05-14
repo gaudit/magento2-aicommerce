@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Service contracts -->
+    <preference for="Gaudit\AiCommerce\Api\ToolRegistryInterface"
+                type="Gaudit\AiCommerce\Model\ToolRegistry"/>
+    <preference for="Gaudit\AiCommerce\Api\ConversationRepositoryInterface"
+                type="Gaudit\AiCommerce\Model\Session\ConversationRepository"/>
+    <preference for="Gaudit\AiCommerce\Api\Data\LlmRequestInterface"
+                type="Gaudit\AiCommerce\Model\Data\LlmRequest"/>
+    <preference for="Gaudit\AiCommerce\Api\Data\LlmResponseInterface"
+                type="Gaudit\AiCommerce\Model\Data\LlmResponse"/>
+    <preference for="Gaudit\AiCommerce\Api\Data\MessageInterface"
+                type="Gaudit\AiCommerce\Model\Data\Message"/>
+    <preference for="Gaudit\AiCommerce\Api\Data\InboundMessageInterface"
+                type="Gaudit\AiCommerce\Model\Data\InboundMessage"/>
+    <preference for="Gaudit\AiCommerce\Api\Data\OutboundMessageInterface"
+                type="Gaudit\AiCommerce\Model\Data\OutboundMessage"/>
+
+    <!-- LLM provider resolution: factory reads config, returns the right client -->
+    <type name="Gaudit\AiCommerce\Model\Llm\LlmClientFactory">
+        <arguments>
+            <argument name="clients" xsi:type="array">
+                <item name="anthropic" xsi:type="object">Gaudit\AiCommerce\Model\Llm\ClaudeClient</item>
+                <item name="openai" xsi:type="object">Gaudit\AiCommerce\Model\Llm\OpenAiClient</item>
+                <item name="gemini" xsi:type="object">Gaudit\AiCommerce\Model\Llm\GeminiClient</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Tool registry: every tool registered here is auto-exposed via MCP, ACP, and chat -->
+    <type name="Gaudit\AiCommerce\Model\ToolRegistry">
+        <arguments>
+            <argument name="tools" xsi:type="array">
+                <item name="search_products" xsi:type="object">Gaudit\AiCommerce\Model\Tool\SearchProductsTool</item>
+                <item name="get_product_details" xsi:type="object">Gaudit\AiCommerce\Model\Tool\GetProductDetailsTool</item>
+                <item name="list_categories" xsi:type="object">Gaudit\AiCommerce\Model\Tool\ListCategoriesTool</item>
+                <item name="add_to_cart" xsi:type="object">Gaudit\AiCommerce\Model\Tool\AddToCartTool</item>
+                <item name="get_order_status" xsi:type="object">Gaudit\AiCommerce\Model\Tool\GetOrderStatusTool</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Channel registry: enabled per-store, gated by system.xml -->
+    <type name="Gaudit\AiCommerce\Model\ChannelRegistry">
+        <arguments>
+            <argument name="channels" xsi:type="array">
+                <item name="telegram" xsi:type="object">Gaudit\AiCommerce\Model\Channel\TelegramChannel</item>
+                <item name="evolution" xsi:type="object">Gaudit\AiCommerce\Model\Channel\EvolutionApiChannel</item>
+                <item name="meta_cloud" xsi:type="object">Gaudit\AiCommerce\Model\Channel\MetaCloudChannel</item>
+                <item name="bridge" xsi:type="object">Gaudit\AiCommerce\Model\Channel\BridgeChannel</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Dedicated logger writing to var/log/aicommerce.log -->
+    <virtualType name="Gaudit\AiCommerce\Model\Logger\Handler"
+                 type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/aicommerce.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Gaudit\AiCommerce\Model\Logger"
+                 type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="name" xsi:type="string">aicommerce</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Gaudit\AiCommerce\Model\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Gaudit\AiCommerce\Model\Orchestrator">
+        <arguments>
+            <argument name="logger" xsi:type="object">Gaudit\AiCommerce\Model\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Gaudit\AiCommerce\Model\Llm\ClaudeClient">
+        <arguments>
+            <argument name="logger" xsi:type="object">Gaudit\AiCommerce\Model\Logger</argument>
+        </arguments>
+    </type>
+
+    <!-- Console commands -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="aicommerce_test_llm" xsi:type="object">Gaudit\AiCommerce\Console\Command\TestLlmCommand</item>
+                <item name="aicommerce_test_mcp" xsi:type="object">Gaudit\AiCommerce\Console\Command\TestMcpCommand</item>
+                <item name="aicommerce_list_tools" xsi:type="object">Gaudit\AiCommerce\Console\Command\ListToolsCommand</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

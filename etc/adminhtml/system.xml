@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="gaudit" translate="label" sortOrder="500">
+            <label>Gaudit</label>
+        </tab>
+        <section id="aicommerce" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>AI Commerce</label>
+            <tab>gaudit</tab>
+            <resource>Gaudit_AiCommerce::config</resource>
+
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable AI Commerce</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="system_prompt" translate="label comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>System Prompt</label>
+                    <comment>Instructions sent to the LLM at the start of every conversation. Use {{store_name}} and {{customer_name}} placeholders.</comment>
+                </field>
+                <field id="monthly_budget_usd" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Monthly LLM Budget (USD)</label>
+                    <comment>Module will refuse new conversations when budget is exceeded.</comment>
+                    <validate>validate-number</validate>
+                </field>
+            </group>
+
+            <group id="llm" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>LLM Provider</label>
+                <field id="provider" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Provider</label>
+                    <source_model>Gaudit\AiCommerce\Model\Config\Source\LlmProvider</source_model>
+                </field>
+                <field id="api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="model" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Model</label>
+                    <comment>e.g. claude-sonnet-4-6, gpt-4o, gemini-2.0-flash</comment>
+                </field>
+                <field id="max_tokens" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Max tokens per response</label>
+                    <validate>validate-digits</validate>
+                </field>
+                <field id="temperature" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Temperature</label>
+                </field>
+            </group>
+
+            <group id="channels" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Channels</label>
+                <field id="telegram_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Telegram</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="telegram_bot_token" translate="label" type="obscure" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Telegram Bot Token</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends><field id="telegram_enabled">1</field></depends>
+                </field>
+                <field id="evolution_enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>WhatsApp via Evolution API</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="evolution_instance" translate="label" type="text" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Evolution Instance Name</label>
+                    <depends><field id="evolution_enabled">1</field></depends>
+                </field>
+                <field id="evolution_api_key" translate="label" type="obscure" sortOrder="23" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Evolution API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends><field id="evolution_enabled">1</field></depends>
+                </field>
+                <field id="meta_cloud_enabled" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>WhatsApp Cloud API (official)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="meta_phone_id" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Meta Phone Number ID</label>
+                    <depends><field id="meta_cloud_enabled">1</field></depends>
+                </field>
+                <field id="meta_access_token" translate="label" type="obscure" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Meta Access Token</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends><field id="meta_cloud_enabled">1</field></depends>
+                </field>
+                <field id="meta_verify_token" translate="label" type="obscure" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Meta Webhook Verify Token</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends><field id="meta_cloud_enabled">1</field></depends>
+                </field>
+                <field id="mcp_enabled" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>MCP Server (for Claude Desktop, IDEs, Anthropic clients)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="acp_enabled" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>ACP Endpoints (for ChatGPT / Stripe)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="ucp_enabled" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>UCP Integration (Google / Gemini)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Skeleton — spec implementation in progress.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <aicommerce>
+            <general>
+                <enabled>0</enabled>
+                <system_prompt><![CDATA[You are a helpful shopping assistant for this store. You speak the language of the customer. You can search products, check stock, add items to cart, and answer questions about orders. Always confirm before placing orders.]]></system_prompt>
+                <monthly_budget_usd>50</monthly_budget_usd>
+            </general>
+            <llm>
+                <provider>anthropic</provider>
+                <model>claude-sonnet-4-6</model>
+                <max_tokens>2048</max_tokens>
+                <temperature>0.7</temperature>
+            </llm>
+            <channels>
+                <telegram_enabled>0</telegram_enabled>
+                <evolution_enabled>0</evolution_enabled>
+                <meta_cloud_enabled>0</meta_cloud_enabled>
+                <mcp_enabled>1</mcp_enabled>
+                <acp_enabled>0</acp_enabled>
+                <ucp_enabled>0</ucp_enabled>
+            </channels>
+            <evolution>
+                <base_url>http://evolution-api:8080</base_url>
+            </evolution>
+            <bridge>
+                <node_bot_url>http://aicommerce-bot:3000</node_bot_url>
+                <enabled>0</enabled>
+            </bridge>
+        </aicommerce>
+    </default>
+</config>
