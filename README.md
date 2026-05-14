@@ -49,6 +49,12 @@ bin/magento aicommerce:list-tools
 
 # Test MCP endpoint
 bin/magento aicommerce:test-mcp
+
+# Send a one-shot message via a channel (skips the LLM)
+bin/magento aicommerce:test-channel telegram <chat_id> -m "hello"
+
+# Public health snapshot
+curl https://your-store.com/aicommerce/health
 ```
 
 ## Connect Claude Desktop via MCP

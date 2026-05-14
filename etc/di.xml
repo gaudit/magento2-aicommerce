@@ -87,6 +87,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="aicommerce_test_llm" xsi:type="object">Gaudit\AiCommerce\Console\Command\TestLlmCommand</item>
                 <item name="aicommerce_test_mcp" xsi:type="object">Gaudit\AiCommerce\Console\Command\TestMcpCommand</item>
+                <item name="aicommerce_test_channel" xsi:type="object">Gaudit\AiCommerce\Console\Command\TestChannelCommand</item>
                 <item name="aicommerce_list_tools" xsi:type="object">Gaudit\AiCommerce\Console\Command\ListToolsCommand</item>
             </argument>
         </arguments>

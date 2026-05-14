@@ -11,5 +11,10 @@
 - ACP endpoint skeleton (`/aicommerce/acp/v1/checkout_sessions`)
 - UCP endpoint skeleton (`/aicommerce/ucp`)
 - REST chat fallback (`/aicommerce/chat`)
-- CLI: `aicommerce:test-llm`, `aicommerce:list-tools`, `aicommerce:test-mcp`
+- CLI: `aicommerce:test-llm`, `aicommerce:list-tools`, `aicommerce:test-mcp`, `aicommerce:test-channel`
+- Health endpoint `GET /aicommerce/health` (no secrets exposed)
+- `db_schema_whitelist.json` for Magento 2.3+ declarative schema
+- i18n: en_US + pt_BR translation files
+- CODE_OF_CONDUCT.md (Contributor Covenant v2.1)
+- Release workflow: tag push creates GitHub Release + notifies Packagist
 - MIT license
