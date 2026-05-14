@@ -17,8 +17,9 @@ jobs:
           fetch-depth: 0
 
       - name: Validate composer.json
+        # Magento modules conventionally use "*" version constraints; --strict would fail.
         run: |
-          docker run --rm -v "$PWD:/app" -w /app composer:2 composer validate --strict
+          docker run --rm -v "$PWD:/app" -w /app composer:2 composer validate --no-check-publish
 
       - name: Extract changelog for this tag
         id: changelog

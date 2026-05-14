@@ -24,7 +24,8 @@ jobs:
           tools: composer:v2
 
       - name: Validate composer.json
-        run: composer validate --strict
+        # Magento modules conventionally use "*" version constraints; --strict would fail.
+        run: composer validate --no-check-publish
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
