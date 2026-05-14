@@ -30,24 +30,28 @@ jobs:
 
       - name: PHP syntax lint
         run: |
-          find Api Model Controller Console Exception registration.php -name "*.php" \
-            -exec php -l -n {} \; 2>&1 | grep -v "No syntax errors" || true
-          # Fail if any file shows an error
-          ! find Api Model Controller Console Exception registration.php -name "*.php" \
-            -exec php -l -n {} \; 2>&1 | grep -q "Parse error\|syntax error"
+          set -e
+          for f in $(find Api Model Controller Console Exception -name "*.php") registration.php; do
+            php -l "$f" > /dev/null
+          done
+          echo "✓ syntax OK"
 
-      - name: PHPUnit (Unit only — Magento not required)
+      - name: Write standalone PHPUnit bootstrap (no Magento install needed)
         run: |
-          if [ -d Test/Unit ]; then
-            phpunit --bootstrap <(cat <<'EOF'
+          cat > .ci-bootstrap.php <<'EOF'
           <?php
           spl_autoload_register(function ($class) {
               if (strpos($class, 'Gaudit\\AiCommerce\\') !== 0) return;
               $rel = str_replace(['Gaudit\\AiCommerce\\', '\\'], ['', '/'], $class) . '.php';
-              if (file_exists(__DIR__ . '/' . $rel)) {
-                  require __DIR__ . '/' . $rel;
-              }
+              $path = __DIR__ . '/' . $rel;
+              if (file_exists($path)) require $path;
           });
           EOF
-          ) Test/Unit
+
+      - name: PHPUnit (Unit only)
+        run: |
+          if [ -d Test/Unit ]; then
+            phpunit --bootstrap .ci-bootstrap.php Test/Unit
+          else
+            echo "No tests; skipping."
           fi
